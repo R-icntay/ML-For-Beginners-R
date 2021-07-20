@@ -88,18 +88,13 @@ Now, let's load the diabetes dataset provided in this source URL: <https://www4.
 
 Also, we'll perform a sanity check on our data using `glimpse()` and dsiplay the first 5 rows using `slice()`.
 
-
-
-
 ```{r load_dataset, exercise = T, exercise.eval = T, message=F, warning=F}
 # Import the data set
 diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
 
 
-
 # Get a glimpse and dimensions of the data
 glimpse(diabetes)
-
 
 
 # Select the first 5 rows of the data
@@ -107,8 +102,6 @@ diabetes %>%
   slice(1:5)
 
 ```
-
-
 
 `glimpse()` shows us that this data has 442 rows and 11 columns with all the columns being of data type `double`
 
@@ -118,14 +111,11 @@ Now that we have the data, let's narrow down to one feature (`bmi`) to target fo
 
 [`dplyr::select()`](https://dplyr.tidyverse.org/reference/select.html) allows us to *select* (and optionally rename) columns in a data frame.
 
-
-```{r select-setup}
+```{r select-setup} # This is a setup chunk}
 # Import the data set
 diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
 
 ```
-
-
 
 ```{r select, exercise = T, exercise.eval = T, message=F, warning=F}
 # Select predictor feature `bmi` and outcome `y`
@@ -137,21 +127,17 @@ diabetes_select %>%
   slice(1:5)
 ```
 
-
-```{r split-setup}
-# Select predictor feature `bmi` and outcome `y`
-diabetes_select <- diabetes %>% 
-  select(c(bmi, y))
-
-```
-
-
-
 ## 3. Training and Testing data
 
 It's common practice in supervised learning to *split* the data into two subsets; a (typically larger) set with which to train the model, and a smaller "hold-back" set with which to see how the model performed.
 
 Now that we have data ready, we can see if a machine can help determine a logical split between the numbers in this dataset. We can use the [rsample](https://tidymodels.github.io/rsample/) package, which is part of the Tidymodels framework, to create an object that contains the information on *how* to split the data, and then two more rsample functions to extract the created training and testing sets:
+
+```{r split-setup} This is a setup chunk}
+# Select predictor feature `bmi` and outcome `y`
+diabetes_select <- diabetes %>% 
+  select(c(bmi, y))
+```
 
 ```{r split, exercise = T, exercise.eval = T, message=F, warning=F}
 set.seed(2056)
@@ -168,22 +154,6 @@ diabetes_train %>%
   slice(1:3)
 
 ```
-
-
-
-```{r train-setup}
-set.seed(2056)
-# Split 67% of the data for training and the rest for tesing
-diabetes_split <- diabetes_select %>% 
-  initial_split(prop = 0.67)
-
-# Extract the resulting train and test sets
-diabetes_train <- training(diabetes_split)
-diabetes_test <- testing(diabetes_split)
-```
-
-
-
 
 ## 4. Train a linear regression model with Tidymodels
 
@@ -210,11 +180,25 @@ lm_spec <-
   set_mode("regression")
 
 
+# Print the model specification
+lm_spec
+
 ```
 
 After a model has been *specified*, the model can be `estimated` or `trained` using the [`fit()`](https://parsnip.tidymodels.org/reference/fit.html) function, typically using a formula and some data.
 
 `y ~ .` means we'll fit `y` as the predicted quantity/target, explained by all the predictors/features ie, `.` (in this case, we only have one predictor: `bmi` )
+
+```{r train-setup} # This is a setup chunk}
+set.seed(2056)
+# Split 67% of the data for training and the rest for tesing
+diabetes_split <- diabetes_select %>% 
+  initial_split(prop = 0.67)
+
+# Extract the resulting train and test sets
+diabetes_train <- training(diabetes_split)
+diabetes_test <- testing(diabetes_split)
+```
 
 ```{r train, exercise = T, exercise.eval = T, message=F, warning=F}
 # Build a linear model specification
@@ -231,9 +215,13 @@ lm_mod <- lm_spec %>%
 lm_mod
 ```
 
+From the model output, we can see the coefficients learned during training. They represent the coefficients of the line of best fit that gives us the lowest overall error between the actual and predicted variable.
 
+## 5. Make predictions on the test set
 
-```{r test-setup}
+Now that we've trained a model, we can use it to predict the disease progression y for the test dataset using [parsnip::predict()](https://parsnip.tidymodels.org/reference/predict.model_fit.html). This will be used to draw the line between data groups.
+
+```{r test-setup} # This is a setup chunk}
 # Build a linear model specification
 lm_spec <- linear_reg() %>% 
   set_engine("lm") %>%
@@ -244,14 +232,6 @@ lm_spec <- linear_reg() %>%
 lm_mod <- lm_spec %>% 
   fit(y ~ ., data = diabetes_train)
 ```
-
-
-
-From the model output, we can see the coefficients learned during training. They represent the coefficients of the line of best fit that gives us the lowest overall error between the actual and predicted variable.
-
-## 5. Make predictions on the test set
-
-Now that we've trained a model, we can use it to predict the disease progression y for the test dataset using [parsnip::predict()](https://parsnip.tidymodels.org/reference/predict.model_fit.html). This will be used to draw the line between data groups.
 
 ```{r test, exercise = T, exercise.eval = T, message=F, warning=F}
 # Make predictions for the test set
@@ -269,13 +249,11 @@ When making predictions, the tidymodels convention is to always produce a tibble
 
 `dplyr::bind_cols()` efficiently binds multiple data frames column.
 
-
-```{r test_pred-setup}
+```{r test_pred-setup} # This is a setup chunk}
 # Make predictions for the test set
 predictions <- lm_mod %>% 
   predict(new_data = diabetes_test)
 ```
-
 
 ```{r test_pred, exercise = T, exercise.eval = T, message=F, warning=F}
 # Combine the predictions and the original test set
@@ -289,19 +267,15 @@ results %>%
 
 ## 6. Plot modelling results
 
+Now, its time to see this visually 📈. We'll create a scatter plot of all the `y` and `bmi` values of the test set, then use the predictions to draw a line in the most appropriate place, between the model's data groupings.
+
+R has several systems for making graphs, but `ggplot2` is one of the most elegant and most versatile. This allows you to compose graphs by **combining independent components**.
 
 ```{r plot_pred-setup}
 # Combine the predictions and the original test set
 results <- diabetes_test %>% 
   bind_cols(predictions)
-
 ```
-
-
-
-Now, its time to see this visually 📈. We'll create a scatter plot of all the `y` and `bmi` values of the test set, then use the predictions to draw a line in the most appropriate place, between the model's data groupings.
-
-R has several systems for making graphs, but `ggplot2` is one of the most elegant and most versatile. This allows you to compose graphs by **combining independent components**.
 
 ```{r plot_pred, exercise = T, exercise.eval = T, message=F, warning=F}
 # Set a theme for the plot
