@@ -14,6 +14,9 @@ library(tidyverse)
 library(tidymodels)
 tutorial_options(exercise.timelimit = 60)
 knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE) # Prevent knitr chunks from appearing
 ```
 
 ## Introduction to Regression - Lesson 1
@@ -85,22 +88,27 @@ Now, let's load the diabetes dataset provided in this source URL: <https://www4.
 
 Also, we'll perform a sanity check on our data using `glimpse()` and dsiplay the first 5 rows using `slice()`.
 
+
+
+
 ```{r load_dataset, exercise = T, exercise.eval = T, message=F, warning=F}
 # Import the data set
 diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
+
 
 
 # Get a glimpse and dimensions of the data
 glimpse(diabetes)
 
 
+
 # Select the first 5 rows of the data
 diabetes %>% 
   slice(1:5)
 
-
-
 ```
+
+
 
 `glimpse()` shows us that this data has 442 rows and 11 columns with all the columns being of data type `double`
 
@@ -109,6 +117,15 @@ diabetes %>%
 Now that we have the data, let's narrow down to one feature (`bmi`) to target for this exercise. This will require us to select the desired columns. So, how do we do this?
 
 [`dplyr::select()`](https://dplyr.tidyverse.org/reference/select.html) allows us to *select* (and optionally rename) columns in a data frame.
+
+
+```{r}
+# Import the data set
+diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
+
+```
+
+
 
 ```{r select, exercise = T, exercise.eval = T, message=F, warning=F}
 # Select predictor feature `bmi` and outcome `y`
@@ -119,6 +136,16 @@ diabetes_select <- diabetes %>%
 diabetes_select %>% 
   slice(1:5)
 ```
+
+
+```{r}
+# Select predictor feature `bmi` and outcome `y`
+diabetes_select <- diabetes %>% 
+  select(c(bmi, y))
+
+```
+
+
 
 ## 3. Training and Testing data
 
@@ -141,6 +168,22 @@ diabetes_train %>%
   slice(1:3)
 
 ```
+
+
+
+```{r}
+set.seed(2056)
+# Split 67% of the data for training and the rest for tesing
+diabetes_split <- diabetes_select %>% 
+  initial_split(prop = 0.67)
+
+# Extract the resulting train and test sets
+diabetes_train <- training(diabetes_split)
+diabetes_test <- testing(diabetes_split)
+```
+
+
+
 
 ## 4. Train a linear regression model with Tidymodels
 
@@ -174,6 +217,12 @@ After a model has been *specified*, the model can be `estimated` or `trained` us
 `y ~ .` means we'll fit `y` as the predicted quantity/target, explained by all the predictors/features ie, `.` (in this case, we only have one predictor: `bmi` )
 
 ```{r train_model_spec, exercise = T, exercise.eval = T, message=F, warning=F}
+# Build a linear model specification
+lm_spec <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
+
+
 # Train a linear regression model
 lm_mod <- lm_spec %>% 
   fit(y ~ ., data = diabetes_train)
@@ -181,6 +230,22 @@ lm_mod <- lm_spec %>%
 # Print the model
 lm_mod
 ```
+
+
+
+```{r}
+# Build a linear model specification
+lm_spec <- linear_reg() %>% 
+  set_engine("lm") %>%
+  set_mode("regression")
+
+
+# Train a linear regression model
+lm_mod <- lm_spec %>% 
+  fit(y ~ ., data = diabetes_train)
+```
+
+
 
 From the model output, we can see the coefficients learned during training. They represent the coefficients of the line of best fit that gives us the lowest overall error between the actual and predicted variable.
 
@@ -204,6 +269,14 @@ When making predictions, the tidymodels convention is to always produce a tibble
 
 `dplyr::bind_cols()` efficiently binds multiple data frames column.
 
+
+```{r}
+# Make predictions for the test set
+predictions <- lm_mod %>% 
+  predict(new_data = diabetes_test)
+```
+
+
 ```{r test_pred, exercise = T, exercise.eval = T, message=F, warning=F}
 # Combine the predictions and the original test set
 results <- diabetes_test %>% 
@@ -215,6 +288,16 @@ results %>%
 ```
 
 ## 6. Plot modelling results
+
+
+```{r}
+# Combine the predictions and the original test set
+results <- diabetes_test %>% 
+  bind_cols(predictions)
+
+```
+
+
 
 Now, its time to see this visually 📈. We'll create a scatter plot of all the `y` and `bmi` values of the test set, then use the predictions to draw a line in the most appropriate place, between the model's data groupings.
 
