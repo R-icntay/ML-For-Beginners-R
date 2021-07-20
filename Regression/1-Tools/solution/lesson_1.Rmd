@@ -119,7 +119,7 @@ Now that we have the data, let's narrow down to one feature (`bmi`) to target fo
 [`dplyr::select()`](https://dplyr.tidyverse.org/reference/select.html) allows us to *select* (and optionally rename) columns in a data frame.
 
 
-```{r}
+```{r select-setup}
 # Import the data set
 diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
 
@@ -138,7 +138,7 @@ diabetes_select %>%
 ```
 
 
-```{r}
+```{r split-setup}
 # Select predictor feature `bmi` and outcome `y`
 diabetes_select <- diabetes %>% 
   select(c(bmi, y))
@@ -171,7 +171,7 @@ diabetes_train %>%
 
 
 
-```{r}
+```{r train-setup}
 set.seed(2056)
 # Split 67% of the data for training and the rest for tesing
 diabetes_split <- diabetes_select %>% 
@@ -216,7 +216,7 @@ After a model has been *specified*, the model can be `estimated` or `trained` us
 
 `y ~ .` means we'll fit `y` as the predicted quantity/target, explained by all the predictors/features ie, `.` (in this case, we only have one predictor: `bmi` )
 
-```{r train_model_spec, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r train, exercise = T, exercise.eval = T, message=F, warning=F}
 # Build a linear model specification
 lm_spec <- linear_reg() %>% 
   set_engine("lm") %>%
@@ -233,7 +233,7 @@ lm_mod
 
 
 
-```{r}
+```{r test-setup}
 # Build a linear model specification
 lm_spec <- linear_reg() %>% 
   set_engine("lm") %>%
@@ -253,7 +253,7 @@ From the model output, we can see the coefficients learned during training. They
 
 Now that we've trained a model, we can use it to predict the disease progression y for the test dataset using [parsnip::predict()](https://parsnip.tidymodels.org/reference/predict.model_fit.html). This will be used to draw the line between data groups.
 
-```{r test_model_spec, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r test, exercise = T, exercise.eval = T, message=F, warning=F}
 # Make predictions for the test set
 predictions <- lm_mod %>% 
   predict(new_data = diabetes_test)
@@ -270,7 +270,7 @@ When making predictions, the tidymodels convention is to always produce a tibble
 `dplyr::bind_cols()` efficiently binds multiple data frames column.
 
 
-```{r}
+```{r test_pred-setup}
 # Make predictions for the test set
 predictions <- lm_mod %>% 
   predict(new_data = diabetes_test)
@@ -290,7 +290,7 @@ results %>%
 ## 6. Plot modelling results
 
 
-```{r}
+```{r plot_pred-setup}
 # Combine the predictions and the original test set
 results <- diabetes_test %>% 
   bind_cols(predictions)
