@@ -69,6 +69,11 @@ A quick `glimpse()` immediately shows that there are blanks and a mix of strings
 
 In fact, it is not very common to be gifted a dataset that is completely ready to use to create a ML model out of the box. But worry not, in this lesson, you will learn how to prepare a raw dataset using standard R libraries 🧑‍🔧. You will also learn various techniques to visualize the data.📈📊
 
+
+
+> A refresher: The pipe operator (`%>%`) performs operations in logical sequence by passing an object forward into a function or call expression. You can think of the pipe operator as saying "and then" in your code.
+
+
 ## 2. Check for missing data
 
 One of the most common issues data scientists need to deal with is incomplete or missing data. R represents missing, or unknown values, with special sentinel value: `NA` (Not Available).
