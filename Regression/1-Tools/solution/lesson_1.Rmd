@@ -86,10 +86,9 @@ Now, let's load the diabetes dataset provided in this source URL: <https://www4.
 
 Also, we'll perform a sanity check on our data using `glimpse()` and dsiplay the first 5 rows using `slice()`.
 
-Before going any further, let's also introduce something you will encounter often in R code 🥁🥁: \`%\>%\`
+Before going any further, let's introduce something you will encounter quite often in R code: the pipe operator `%>%`
 
-\
-The pipe operator (\`%\>%\`) performs operations in logical sequence by passing an object forward into a function or call expression. You can think of the pipe operator as saying "and then" in your code.
+The pipe operator (`%>%`) performs operations in logical sequence by passing an object forward into a function or call expression. You can think of the pipe operator as saying "and then" in your code.\
 
 ```{r load_dataset, message=F, warning=F}
 # Import the data set
