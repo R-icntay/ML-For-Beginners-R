@@ -1,0 +1,277 @@
+/******
+dplyr learnr tutorial
+*******/
+
+/*-------- Google font imports --------*/
+
+@import url(//fonts.googleapis.com/css?family=Roboto+Mono);
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;400;500;700&display=swap');
+
+
+/*-------- Background color & body font --------*/
+body {
+  background-color: white;
+  font-family: 'Tajawal', sans-serif;
+  color: black;
+  font-size: 14px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/*-------- Main Panel ---------*/
+.topics {
+    width: 70%;
+    overflow-x: auto;
+    padding-bottom: 600px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: white;
+}
+
+.band {
+    padding-left: 3%;
+    padding-right: 3%;
+    position: relative;
+}
+
+/* Emphasis (e.g. italics) */
+em {
+    font-family: 'Tajawal', sans-serif;
+    color: dimgray;
+}
+
+/*--------- Headers ---------*/
+
+h2 {
+  color: black;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 500;
+}
+
+h3 {
+  color: black;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+h4 {
+  color: darkmagenta;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 500;
+  padding-top: 20px;
+  text-transform: uppercase;
+}
+
+h5 {
+    color: mediumorchid;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 16px;
+}
+
+/*-------- Code chunk header panel ---------*/
+.panel-default > .panel-heading {
+    color: white;
+    background-color: darkslateblue;
+    border: 0;
+}
+
+/*------- Rectangle panels --------*/
+.panel, pre {
+    border-radius: 0;
+    background-color: #EBEBEB;
+    border: 0;
+    font-size: 13px;
+    font: 'Tajawal', sans-serif
+}
+
+/*-------- Code chunk main panel --------*/
+
+.ace-tm {
+    background-color: white;
+    color: dimgray;
+    border-bottom: 1px solid gainsboro;
+    border-right: 1px solid gainsboro;
+    border-left: 1px solid gainsboro;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 13px;
+}
+
+/*-------- Line # cells --------*/
+
+.ace_gutter-cell {
+    padding-left: 19px;
+    padding-right: 6px;
+    background-repeat: no-repeat;
+    background-color: white;
+    color: lightseagreen;
+    border-right: gainsboro;
+}
+
+/*-------- Code returns --------*/
+.tutorial-exercise-output > pre {
+    max-height: 500px;
+    overflow-y: auto;
+    background-color: white;
+    color: dimgray;
+    font-size: 13px;
+    border: 1px solid gainsboro;
+}
+
+
+/*------- In line code aesthetic --------*/
+code {
+    font-family: 'Roboto Mono', monospace;
+    color: midnightblue;
+    background-color: ghostwhite;
+    font-size: 13px;
+}
+
+.panel, pre {
+    border-radius: 0;
+    background-color: #E5E4E2;
+    border: 0;
+    font-size: 13;
+    font: 'Tajawal', sans-serif;
+}
+
+/*------- Hyperlinks --------*/
+a {
+    font-family: 'Tajawal', sans-serif;
+    color: indigo;
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: mediumslateblue;
+    text-decoration: underline;
+}
+
+
+/*------- Main menu -------*/
+.topicsList .topic {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 400;
+    color: teal;
+    line-height: 45px;
+    font-size: 16px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-size: 2px 80px;
+    background-position: left 100%;
+        background-position-y: 100%;
+    background-image: url(images/topicProgress.png);
+    border-bottom: 0;
+    border-top: 0;
+    -webkit-transition-property: background-position;
+    transition-property: background-position;
+    -webkit-transition-duration: 0.25s;
+    transition-duration: 0.25s;
+}
+
+/*------- Selected menu item -------*/
+.topicsList .topic.current {
+    font-family: 'Tajawal', sans-serif;
+    background-color: steelblue;
+    color: black;
+    border: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+/*--- When hovering ---*/
+.topicsList .topic:hover {
+    background-color: white;
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/*------- Solution / Hint buttons -------*/
+tutorial-exercise-input .btn-tutorial-solution {
+    background-color: mediumorchid;
+    color: white;
+    font-family: 'Tajawal', sans-serif;
+    padding-top: 5px;
+}
+
+
+/*------- Solution popover --------*/
+popover-title {
+    margin: 0;
+    background-color: mediumslateblue;
+    color: white;
+    font-family: 'Tajawal', sans-serif;
+}
+
+
+/*------- Buttons -------*/
+
+.tutorial-exercise-input .btn-xs:hover {
+    font-weight: normal;
+    background-color: mediumorchid;
+    color: white;
+    padding-top: 5px;
+}
+
+/*------- Button default/primary -------*/
+.btn-default {
+    color: white;
+    background-color: mediumslateblue;
+    background-image: none;
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    text-shadow: none;
+    padding-top: 5px;
+}
+
+.btn-primary, .btn-success, .btn-info, .btn-light, .btn-xs  {
+  color: white;
+    background-color: mediumslateblue;
+    background-image: none;
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    text-shadow: none;
+    padding-top: 5px;
+}
+
+.topicActions .btn-primary:hover, .btn-success:hover, .btn-info:hover, .btn-light:hover, .btn-xs:hover {
+    color: white;
+    background-color: mediumorchid;
+    background-image: none;
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    text-shadow: none;
+    padding-top: 5px;
+}
+
+.btn-default:hover, btn-success:hover, btn-info:hover, btn-primary:hover {
+  background-color: mediumorchid;
+  color: white;
+  font-family: 'Tajawal', sans-serif;
+  padding-top: 5px;
+}
+
+hr.examples {
+  border: 3px solid slateblue;
+}
+
+hr.activities {
+  border: 3px solid orange;
+}
+
+/*------ FORK ON GITHUB BUTTON -------*/
+
+.button {
+        display: inline-block;
+        padding: 10px 20px;
+        padding-top: 10px;
+        text-align: center;
+        text-decoration: none;
+        color: white;
+        background-color: darkgray;
+        border-radius: 6px;
+        outline: none;
+      }

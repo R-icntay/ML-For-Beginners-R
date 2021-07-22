@@ -1,23 +1,14 @@
 ---
-title: 'Machine Learning for Beginners: Regression'
+title: 'Build a regression model: Get started with R and Tidymodels for regression models'
 output:
-  learnr::tutorial:
-    progressive: no
-    allow_skip: yes
-    css: css/style.css
-runtime: shiny_prerendered
+  html_document:
+    df_print: paged
+    theme: flatly
+    highlight: breezedark
+    toc: yes
+    toc_float: yes
+    code_download: yes
 ---
-
-```{r setup, include=FALSE}
-library(learnr)
-library(tidyverse)
-library(tidymodels)
-tutorial_options(exercise.timelimit = 60)
-knitr::opts_chunk$set(error = TRUE)
-knitr::opts_chunk$set(message = FALSE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(echo = FALSE) # Prevent knitr chunks from appearing
-```
 
 ## Introduction to Regression - Lesson 1
 
@@ -43,9 +34,16 @@ You can have them installed as:
 
 `install.packages(c("tidyverse", "tidymodels"))`
 
-Now, let's load these awesome packages and make them available in our current R session.
+The script below checks whether you have the packages required to complete this module and installs them for you in case they are missing.
 
-```{r load_tidy_verse_models, exercise = T, exercise.eval = T, message=F, warning=F, exercise.setup = "setupA"}
+```{r, message=F, warning=F}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, tidymodels)
+```
+
+Now, let's load these awesome packages and make them available in our current R session. (This is for mere illustration, `pacman::p_load()` already did that for you)
+
+```{r load_tidy_verse_models, message=F, warning=F}
 # load the core Tidyverse packages
 library(tidyverse)
 
@@ -88,7 +86,7 @@ Now, let's load the diabetes dataset provided in this source URL: <https://www4.
 
 Also, we'll perform a sanity check on our data using `glimpse()` and dsiplay the first 5 rows using `slice()`.
 
-```{r load_dataset, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r load_dataset, message=F, warning=F}
 # Import the data set
 diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
 
@@ -111,13 +109,7 @@ Now that we have the data, let's narrow down to one feature (`bmi`) to target fo
 
 [`dplyr::select()`](https://dplyr.tidyverse.org/reference/select.html) allows us to *select* (and optionally rename) columns in a data frame.
 
-```{r select-setup} # This is a setup chunk}
-# Import the data set
-diabetes <- read_table2(file = "https://www4.stat.ncsu.edu/~boos/var.select/diabetes.rwrite1.txt")
-
-```
-
-```{r select, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r select, message=F, warning=F}
 # Select predictor feature `bmi` and outcome `y`
 diabetes_select <- diabetes %>% 
   select(c(bmi, y))
@@ -133,13 +125,7 @@ It's common practice in supervised learning to *split* the data into two subsets
 
 Now that we have data ready, we can see if a machine can help determine a logical split between the numbers in this dataset. We can use the [rsample](https://tidymodels.github.io/rsample/) package, which is part of the Tidymodels framework, to create an object that contains the information on *how* to split the data, and then two more rsample functions to extract the created training and testing sets:
 
-```{r split-setup} This is a setup chunk}
-# Select predictor feature `bmi` and outcome `y`
-diabetes_select <- diabetes %>% 
-  select(c(bmi, y))
-```
-
-```{r split, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r split, message=F, warning=F}
 set.seed(2056)
 # Split 67% of the data for training and the rest for tesing
 diabetes_split <- diabetes_select %>% 
@@ -169,7 +155,7 @@ In Tidymodels, you specify models using `parsnip()` by specifying three concepts
 
 This modeling information is captured in a model specification, so let's build one!
 
-```{r lm_model_spec, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r lm_model_spec, message=F, warning=F}
 # Build a linear model specification
 lm_spec <- 
   # Type
@@ -189,18 +175,7 @@ After a model has been *specified*, the model can be `estimated` or `trained` us
 
 `y ~ .` means we'll fit `y` as the predicted quantity/target, explained by all the predictors/features ie, `.` (in this case, we only have one predictor: `bmi` )
 
-```{r train-setup} # This is a setup chunk}
-set.seed(2056)
-# Split 67% of the data for training and the rest for tesing
-diabetes_split <- diabetes_select %>% 
-  initial_split(prop = 0.67)
-
-# Extract the resulting train and test sets
-diabetes_train <- training(diabetes_split)
-diabetes_test <- testing(diabetes_split)
-```
-
-```{r train, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r train, message=F, warning=F}
 # Build a linear model specification
 lm_spec <- linear_reg() %>% 
   set_engine("lm") %>%
@@ -221,19 +196,7 @@ From the model output, we can see the coefficients learned during training. They
 
 Now that we've trained a model, we can use it to predict the disease progression y for the test dataset using [parsnip::predict()](https://parsnip.tidymodels.org/reference/predict.model_fit.html). This will be used to draw the line between data groups.
 
-```{r test-setup} # This is a setup chunk}
-# Build a linear model specification
-lm_spec <- linear_reg() %>% 
-  set_engine("lm") %>%
-  set_mode("regression")
-
-
-# Train a linear regression model
-lm_mod <- lm_spec %>% 
-  fit(y ~ ., data = diabetes_train)
-```
-
-```{r test, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r test, message=F, warning=F}
 # Make predictions for the test set
 predictions <- lm_mod %>% 
   predict(new_data = diabetes_test)
@@ -249,13 +212,7 @@ When making predictions, the tidymodels convention is to always produce a tibble
 
 `dplyr::bind_cols()` efficiently binds multiple data frames column.
 
-```{r test_pred-setup} # This is a setup chunk}
-# Make predictions for the test set
-predictions <- lm_mod %>% 
-  predict(new_data = diabetes_test)
-```
-
-```{r test_pred, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r test_pred, message=F, warning=F}
 # Combine the predictions and the original test set
 results <- diabetes_test %>% 
   bind_cols(predictions)
@@ -271,13 +228,7 @@ Now, its time to see this visually 📈. We'll create a scatter plot of all the 
 
 R has several systems for making graphs, but `ggplot2` is one of the most elegant and most versatile. This allows you to compose graphs by **combining independent components**.
 
-```{r plot_pred-setup}
-# Combine the predictions and the original test set
-results <- diabetes_test %>% 
-  bind_cols(predictions)
-```
-
-```{r plot_pred, exercise = T, exercise.eval = T, message=F, warning=F}
+```{r plot_pred, message=F, warning=F}
 # Set a theme for the plot
 theme_set(theme_light())
 # Create a scatter plot
