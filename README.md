@@ -6,4 +6,4 @@ This repo attempts to create an R version of the Python solutions used in the am
  
 Happy leaRning!🌍
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/R-icntay/ML-For-Beginners-R/main?urlpath=shiny/Regression/)
+
