@@ -3,6 +3,5 @@ channels:
 dependencies:
   - r-base=4.0
   - r-tidyverse
-  - r-learnr
   - r-tidymodels
   
